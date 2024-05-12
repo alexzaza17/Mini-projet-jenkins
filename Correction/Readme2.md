@@ -31,5 +31,6 @@ Avant de realiser ces differentes atsks nousavons tout a d abord redige le Docke
 
 ![staging production1](https://github.com/alexzaza17/Mini-projet-jenkins/assets/159175882/317c07e1-d9f4-4e38-80c8-03b9434fa57c)
 
+Ici nous pouvons constacter que l application a biene ete heberge sur la plateforme Heroku
 ![Heroku](https://github.com/alexzaza17/Mini-projet-jenkins/assets/159175882/db981a70-af7d-4267-8d7a-e4cb688d34b5)
 
