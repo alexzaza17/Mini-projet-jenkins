@@ -29,6 +29,8 @@ Avant de realiser ces differentes atsks nousavons tout a d abord redige le Docke
 
 ![Screenshot 2024-04-14 123524](https://github.com/alexzaza17/Mini-projet-jenkins/assets/159175882/a65a1700-51c1-4a7b-912a-0629b9ad1101)
 
+![Slack-Noti](https://github.com/alexzaza17/projet-fils-rouge/assets/159175882/ee1e78c6-f6e9-4080-9830-adb78da59a61)
+
 ![staging production1](https://github.com/alexzaza17/Mini-projet-jenkins/assets/159175882/317c07e1-d9f4-4e38-80c8-03b9434fa57c)
 
 Ici nous pouvons constacter que l application a biene ete heberge sur la plateforme Heroku
