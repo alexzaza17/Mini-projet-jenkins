@@ -37,7 +37,7 @@ pipeline {
                 script {
                     sh '''
                         echo "Testing container..."
-                        curl -I http://localhost:83 | grep -i "200"
+                        curl -I http://192.168.56.10:83 | grep -i "200"
                         sleep 5
                     '''
                 }
@@ -68,12 +68,15 @@ pipeline {
         stage ('Ansible environment encours') {
           agent any
           environment {
-            VAULT_KEY = credentials('vault_key)
+            VAULT_KEY = credentials('vault_key')
+            PRIVATE_KEY = credentials('private_key')
           }
           steps {
              script {
                sh '''
                   echo $VAULT_KEY > vault.key
+                  echo $PRIVATE_KEY > id_rsa
+                  chmod 600 id_rsa
                '''
              }
           }
@@ -90,46 +93,53 @@ pipeline {
               }
           }
 
-           stage ("Ping targeted hosts")  {
+           stage("Ping targeted hosts") {
+             #agent {
+               #docker {
+                #image 'centos:7'
+                 # args '-u root'  // To ensure you have root privileges
+                #}
+              #}
               steps {
                 script {
-                    sh '''
-                       apt update -y
-                       #apt install sshpass -y
-                       export ANSIBLE_CONFIG=$(pwd)/Ansible/ansible.cfg
-                       ansible all -m ping --private-key id_rsa -l prod
-                       '''
-                    }
-                 }
-              }
+                  sh '''
+                    apt update -y
+                    apt install sshpass -y
+                    export ANSIBLE_CONFIG=/var/jenkins_home/workspace/ic-webapp/Ansible/ansible.cfg
+                    ansible all -m ping --private-key id_rsa -l prod
+             '''
+        }
+    }
+}
+
 
             stage ("Check synthax the plabook")  {
               steps {
                 script {
                     sh '''
-                       export ANSIBLE_CONFIG=$(pwd)/Ansible/ansible.cfg
+                       export ANSIBLE_CONFIG=/var/jenkins_home/workspace/ic-webapp/Ansible/ansible.cfg
                        ansible-lint -x 306 Ansible/playbooks/* || echo passing linter
-                       echo ${GIT_BRANCH)
+                       echo ${GIT_BRANCH}
                        '''
                     }
                  }
               }
 
-              stage ("Deployment de l App en prod")  {
+            stage ("Deployment de l App en prod")  {
                 when { expression { GIT_BRANCH == 'origin/main'}}
                 stages {
-                   stage ("Production install de docker on all hosts) {
+                   stage ("Production install de docker on all hosts") {
                       steps {
                         script {
                            sh '''
                                export ANSIBLE_CONFIG=$(pwd)/Ansible/ansible.cfg
                                ansible-playbook  Ansible/playbooks/docker-install.yml --vault-password-file vault.key --private-key id_rsa -l odoo_server,pgadmin_server
-                       '''
+                           '''
                     }
                  }
               }
 
-               stage ("Deployment de ic-webapp")  {
+                stage ("Deployment de ic-webapp")  {
                       steps {
                         script {
                            sh '''
@@ -165,5 +175,7 @@ pipeline {
             }                 
         }                 
     
-   }
+    }
+  }
+ }
 }
